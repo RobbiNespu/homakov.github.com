@@ -381,8 +381,8 @@ function req(url){
   x.send();
   return JSON.parse(x.responseText);
 }
-function r(text,target){
-  json = req('https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&target='+target+'&key='+localStorage.apikey);
+function r(text,target,source){
+  json = req('https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&source='+source+'&target='+target+'&key='+localStorage.apikey);
 
   var value = json.data.translations[0].translatedText
   document.getElementById('inp'+target).value = value;
@@ -400,10 +400,9 @@ function tr(text,from){
 
   for(var i in langs){
     if(langs[i] != from){
-      r(text,langs[i]);      
+      r(text,langs[i], from);      
     }else{
       sound(text, langs[i])
-
     }
   }
 
