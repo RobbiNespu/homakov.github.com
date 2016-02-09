@@ -392,7 +392,11 @@ function r(text,target,source){
 }
 
 function sound(value, target){
-  document.getElementById('audio'+target).src = 'data:text/html,<audio controls  src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';  
+  document.getElementById('audio'+target).src = 'data:text/html,<audio controls  onerror=redirect() src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';  
+}
+function redirect(){
+  alert("Enter CAPTCHA (to get audio working) and go back")
+  location = 'https://translate.google.com/translate_tts?ie=UTF-8&q=hi&tl=en&total=1&idx=0'
 }
 
 function tr(text,from){
