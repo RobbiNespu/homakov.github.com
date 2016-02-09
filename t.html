@@ -6,7 +6,8 @@ function r(text,target){
   json = JSON.parse(x.responseText);
   var value = json.data.translations[0].translatedText
   document.getElementById('inp'+target).value = value;
-
+  
+  value=value.replace()
   document.getElementById('audio'+target).src = 'data:text/html,<audio controls  src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';
 }
 
@@ -34,7 +35,7 @@ if(localStorage.langs == 'null'){
 var langs = localStorage.langs.split(',');
 for(i in langs){
   var l=langs[i]
-  document.write(l+':<br><textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe id="audio'+l+'"></iframe><br>');
+  document.write(l+':<br><textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe seamless height="100px" id="audio'+l+'"></iframe><br>');
 }
 
 }
