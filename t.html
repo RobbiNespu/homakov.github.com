@@ -3,7 +3,10 @@ function r(text,target){
   x=new XMLHttpRequest;
   x.open('get','https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&target='+target+'&key='+localStorage.apikey, true);
   x.send();
-  document.getElementById('inp'+target).value=x.responseText;
+  json = JSON.parse(x.responseText);
+  var value = json.data.translations[0].translatedText
+  document.getElementById('inp'+target).value = value;
+
 }
 
 function tr(text,from){
