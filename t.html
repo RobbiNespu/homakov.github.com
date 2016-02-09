@@ -1,0 +1,33 @@
+<script>
+function r(text,target){
+  x=new XMLHttpRequest;
+  x.open('get','https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&target='+target+'&key='+localStorage.apikey, true);
+  x.send();
+  document.getElementById('inp'+target).value=x.responseText;
+}
+
+function tr(text,from){
+  for(var i in langs){
+    if(langs[i] != from){
+      r(text,langs[i]);      
+    }
+  }
+}
+
+
+
+if(!localStorage.apikey){
+  localStorage.apikey = prompt('Your key for Google Translate API (get at https://console.cloud.google.com/apis/credentials)');
+}
+
+if(!localStorage.langs){
+  localStorage.langs = prompt('Comma separated langs e.g. "ru,es,en"');
+}
+
+var langs = localStorage.langs.split(',');
+for(i in langs){
+  var l=langs[i]
+  document.write('<textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea>');
+}
+
+</script>
