@@ -1,21 +1,44 @@
 <script>
-function r(text,target){
+function req(url){
   x=new XMLHttpRequest;
-  x.open('get','https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&target='+target+'&key='+localStorage.apikey, false);
+  x.open('get',url, false);
   x.send();
-  json = JSON.parse(x.responseText);
+  return JSON.parse(x.responseText);
+}
+function r(text,target){
+  json = req('https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&target='+target+'&key='+localStorage.apikey);
+
   var value = json.data.translations[0].translatedText
   document.getElementById('inp'+target).value = value;
   
-  value=value.replace()
-  document.getElementById('audio'+target).src = 'data:text/html,<audio controls  src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';
+  value=value.replace();
+  sound(value, target);
+}
+
+function sound(value, target){
+  document.getElementById('audio'+target).src = 'data:text/html,<audio controls  src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';  
 }
 
 function tr(text,from){
+  img(text);
+
   for(var i in langs){
     if(langs[i] != from){
       r(text,langs[i]);      
+    }else{
+      sound(text, langs[i])
+
     }
+  }
+
+}
+
+function img(text){
+  if(text.split(' ').length < 5){
+    //https://www.googleapis.com/customsearch/v1?q=vodka&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s
+    json = req('https://www.googleapis.com/customsearch/v1?q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s');
+    console.log(json);
+    document.getElementById('imgs').innerHTML= imgs;
   }
 }
 
@@ -35,10 +58,11 @@ if(localStorage.langs == 'null'){
 var langs = localStorage.langs.split(',');
 for(i in langs){
   var l=langs[i]
-  document.write(l+':<br><textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe seamless border=0px height="20px" id="audio'+l+'"></iframe><br>');
+  document.write(l+':<br><textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe seamless style="border:0px" height="35px" id="audio'+l+'"></iframe><br>');
 }
 
 }
   document.write('<br><a href=javascript:localStorage.clear();>clear localStorage</a>')
+  document.write('<br><div id=imgs></div>')
 
 </script>
