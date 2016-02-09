@@ -36,7 +36,7 @@ function tr(text,from){
 function img(text){
   if(text.split(' ').length < 5){
     //https://www.googleapis.com/customsearch/v1?q=vodka&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s
-    json = req('https://www.googleapis.com/customsearch/v1?q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s');
+    json = req('https://www.googleapis.com/customsearch/v1?searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s');
     console.log(json);
     document.getElementById('imgs').innerHTML= imgs;
   }
