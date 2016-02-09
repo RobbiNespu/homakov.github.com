@@ -25,11 +25,16 @@ if(!localStorage.apikey){
 if(!localStorage.langs){
   localStorage.langs = prompt('Comma separated langs e.g. "ru,es,en"');
 }
+if(localStorage.langs.length == 0){
+  document.write('You are using WebView (open in your browser) or entered incorrect API key.')
+}else{
 
 var langs = localStorage.langs.split(',');
 for(i in langs){
   var l=langs[i]
   document.write(l+':<br><textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><br>');
+}
+  
 }
 
 </script>
