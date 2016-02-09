@@ -41,7 +41,7 @@ function img(text){
     console.log(json);
     imgs = '';
     for(i=0;i<5;i++){
-      imgs+='<img width=480px src="'+json.items[i].link+'"><br>';
+      imgs+='<img width=300px src="'+json.items[i].link+'"><br>';
     }
     document.getElementById('imgs').innerHTML= imgs;
   }
@@ -68,7 +68,9 @@ for(i in langs){
 }
 
 }
-  document.write('<br><a href=javascript:localStorage.clear();>clear localStorage</a>')
-  document.write('<br><div id=imgs></div>')
+  document.write('<br><div style="position:absolute;right:0px;top:0px" id=imgs></div>')
+
+
+  document.write('<br>Optimized for desktop only! <a href=javascript:localStorage.clear();>clear localStorage</a>')
 
 </script>
