@@ -38,6 +38,10 @@ function img(text){
     //https://www.googleapis.com/customsearch/v1?q=vodka&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s
     json = req('https://www.googleapis.com/customsearch/v1?searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s');
     console.log(json);
+    imgs = '';
+    for(i in json.items){
+      imgs+='<img src="'+json.items[i].link+'"><br>';
+    }
     document.getElementById('imgs').innerHTML= imgs;
   }
 }
