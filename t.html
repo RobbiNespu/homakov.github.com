@@ -29,7 +29,7 @@ if(!localStorage.langs){
 var langs = localStorage.langs.split(',');
 for(i in langs){
   var l=langs[i]
-  document.write('<textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><br>');
+  document.write(l+':<br><textarea rows="10" cols="80" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><br>');
 }
 
 </script>
