@@ -40,8 +40,8 @@ function img(text){
     json = req('https://www.googleapis.com/customsearch/v1?searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s');
     console.log(json);
     imgs = '';
-    for(i=0;i<6;i++){
-      imgs+='<img width=300px src="'+json.items[i].link+'">';
+    for(i=0;i<9;i++){
+      imgs+='<img width=250px src="'+json.items[i].link+'">';
     }
     document.getElementById('imgs').innerHTML= imgs;
   }
@@ -68,7 +68,7 @@ for(i in langs){
 }
 
 }
-  document.write('<br><div style="width:600px; position:absolute;right:0px;top:0px" id=imgs></div>')
+  document.write('<br><div style="width:750px; position:absolute;right:0px;top:0px" id=imgs></div>')
 
 
   document.write('<br>Optimized for desktop only! <a href=javascript:localStorage.clear();>clear localStorage</a>')
