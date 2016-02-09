@@ -369,8 +369,9 @@ var LANGS = [
 
 var list=[];
 for(var i in LANGS){
-  var list.push(LANGS[i].name+'('+LANGS[i].language+')');
+  list.push(LANGS[i].name+'('+LANGS[i].language+')');
 }
+list = list.join(',')
 
 
 
