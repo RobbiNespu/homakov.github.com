@@ -375,20 +375,47 @@ list = list.join(',')
 
 
 
-function req(url){
+function req(url, cb){
   x=new XMLHttpRequest;
-  x.open('get',url, false);
+  x.open('get',url, true);
   x.send();
-  return JSON.parse(x.responseText);
+  x.onreadystatechange=function(){
+    if(x.readyState == 4){
+      cb(JSON.parse(x.responseText));
+    }
+  }
 }
-function r(text,target,source){
-  json = req('https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&source='+source+'&target='+target+'&key='+localStorage.apikey);
 
-  var value = json.data.translations[0].translatedText
-  document.getElementById('inp'+target).value = value;
-  
-  value=value.replace();
-  sound(value, target);
+function save(){
+  out = '';
+  out+="<tr>";
+  for(i in langs){  
+    out+="<td>"+document.getElementById('inp'+langs[i]).value+"</td>";
+  }
+  out+="</tr>";
+
+  img = document.getElementById('imgs').innerHTML;
+
+  if(img.length > 0){
+    out+="<tr>"+img+"</tr>"
+  }
+  localStorage.table += out;
+
+}
+
+function r(text,target,source){
+  req('https://www.googleapis.com/language/translate/v2?q='+encodeURIComponent(text)+'&source='+source+'&target='+target+'&key='+localStorage.apikey, function(json){
+    
+
+    var value = json.data.translations[0].translatedText
+    document.getElementById('inp'+target).value = value;
+    
+    value=value.replace();
+    sound(value, target); 
+    window.left -= 1;
+    if(window.left == 0) save();   
+  });
+
 }
 
 function sound(value, target){
@@ -400,7 +427,8 @@ function redirect(){
 }
 
 function tr(text,from){
-  img(text);
+  var images = img(text);
+  window.left = langs.length;
 
   for(var i in langs){
     if(langs[i] != from){
@@ -413,21 +441,27 @@ function tr(text,from){
 }
 
 function img(text){
-  var imgs = '';
-
+  imgs = '';
+  document.getElementById('imgs').innerHTML = ''
   if(text.split(' ').length < 5){
     //https://www.googleapis.com/customsearch/v1?q=vodka&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s
-    json = req('https://www.googleapis.com/customsearch/v1?searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s');
-    console.log(json);
+    req('https://www.googleapis.com/customsearch/v1?safe=high&searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s', function(json){
+      console.log(json);
 
-    for(i=0;i<9;i++){
-      imgs+='<img width=250px src="'+json.items[i].link+'">';
-    }
+      for(i=0;i<6;i++){
+        imgs+='<img height=250px src="'+json.items[i].link+'">';
+      }
+      document.getElementById('imgs').innerHTML= imgs;
+    });
 
   }
-  document.getElementById('imgs').innerHTML= imgs;
 }
 
+
+function build(){
+  var html = '<table>'+localStorage.table+'</table>';
+  document.getElementById('list').innerHTML=html;
+}
 
 
 if(!localStorage.apikey){
@@ -442,16 +476,19 @@ if(localStorage.langs == 'null'){
   document.write('You are using WebView (open in your browser) or entered incorrect API key.')
 }else{
 
-var langs = localStorage.langs.split(',');
+langs = localStorage.langs.split(',');
+head = '<tr>';
 for(i in langs){
+
   var l=langs[i]
+  head+="<td>"+langs[i]+"</td>"
   document.write(l+':<br><textarea style="font-size:30" rows="4" cols="40" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe seamless style="border:0px" height="35px" id="audio'+l+'"></iframe><br>');
 }
-
+head+='</tr>'
 }
   document.write('<br><div style="width:750px; position:absolute;right:0px;top:0px" id=imgs></div>')
 
 
-  document.write('<br>Optimized for desktop only! <a href="https://translate.google.com/translate_tts?ie=UTF-8&q=h&tl=zh&total=1&idx=0&">Broken audio? Enter CAPTCHA</a> <a href=javascript:localStorage.clear();>Clear localStorage</a>')
+  document.write('<br>Optimized for desktop only! <a href="https://translate.google.com/translate_tts?ie=UTF-8&q=h&tl=zh&total=1&idx=0&">Broken audio? Enter CAPTCHA</a> <a href=javascript:build();>History</a><a href=javascript:localStorage.clear();>Clear localStorage</a>')
 
 </script>
