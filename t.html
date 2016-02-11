@@ -445,7 +445,7 @@ if(localStorage.langs == 'null'){
 var langs = localStorage.langs.split(',');
 for(i in langs){
   var l=langs[i]
-  document.write(l+':<br><textarea style="font-size:30" rows="5" cols="25" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe seamless style="border:0px" height="35px" id="audio'+l+'"></iframe><br>');
+  document.write(l+':<br><textarea style="font-size:30" rows="4" cols="40" onchange=tr(this.value,"'+l+'"); id="inp'+l+'" placeholder="'+l+'"></textarea><br><iframe seamless style="border:0px" height="35px" id="audio'+l+'"></iframe><br>');
 }
 
 }
