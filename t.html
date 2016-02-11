@@ -394,10 +394,10 @@ function save(){
   }
   out+="</tr>";
 
-  img = document.getElementById('imgs').innerHTML;
+  images = document.getElementById('imgs').innerHTML;
 
-  if(img.length > 0){
-    out+="<tr>"+img+"</tr>"
+  if(images.length > 0){
+    out+="<tr>"+images+"</tr>"
   }
   localStorage.table += out;
 
@@ -414,7 +414,7 @@ function r(text,target,source){
     window.left -= 1;
     console.log(window.left)
     if(window.left == 1){
-      
+
       save()
     };   
   });
@@ -457,7 +457,7 @@ function img(text){
       console.log(json);
 
       for(i=0;i<6;i++){
-        imgs+='<img height=250px src="'+json.items[i].link+'">';
+        imgs+='<img height=150px src="'+json.items[i].link+'">';
       }
       document.getElementById('imgs').innerHTML= imgs;
     });
