@@ -412,7 +412,10 @@ function r(text,target,source){
     value=value.replace();
     sound(value, target); 
     window.left -= 1;
-    if(window.left == 0) save();   
+    console.log(window.left)
+    if(window.left == 0){
+      save()
+    };   
   });
 
 }
