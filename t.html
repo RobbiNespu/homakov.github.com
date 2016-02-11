@@ -417,13 +417,15 @@ function r(text,target,source){
 
 }
 
-function sound(value, target){
-  document.getElementById('audio'+target).src = 'data:text/html,<audio controls  onerror=red() src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';  
-}
 
 function red(){
   alert("Enter CAPTCHA (to get audio working) and go back")
   location = 'https://translate.google.com/translate_tts?ie=UTF-8&q=hi&tl=en&total=1&idx=0'
+}
+
+
+function sound(value, target){
+  document.getElementById('audio'+target).src = 'data:text/html,<audio controls  onerror=\'parent.location="https://translate.google.com/translate_tts?ie=UTF-8&q=hi&tl=en&total=1&idx=0"\' src="https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(value)+'&tl='+target+'&total=1&idx=0&client=tl">play</audio>';  
 }
 
 function tr(text,from){
@@ -446,7 +448,7 @@ function img(text){
   if(text.split(' ').length < 5){
     //https://www.googleapis.com/customsearch/v1?q=vodka&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s
     var url = 'https://www.googleapis.com/customsearch/v1?safe=high&searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s';
-    
+
     req(url, function(json){
       console.log(json);
 
