@@ -376,7 +376,7 @@ list = list.join(',')
 
 
 function req(url, cb){
-  x=new XMLHttpRequest;
+  var x = new XMLHttpRequest;
   x.open('get',url, true);
   x.send();
   x.onreadystatechange=function(){
@@ -445,7 +445,9 @@ function img(text){
   document.getElementById('imgs').innerHTML = ''
   if(text.split(' ').length < 5){
     //https://www.googleapis.com/customsearch/v1?q=vodka&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s
-    req('https://www.googleapis.com/customsearch/v1?safe=high&searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s', function(json){
+    var url = 'https://www.googleapis.com/customsearch/v1?safe=high&searchType=image&q='+encodeURIComponent(text)+'&cx=002713200962003262119:ahmjxrf6qfq&key=AIzaSyAUNNEvF5Bsqiw4uoJxPxFKj8DC10Awx0s';
+    
+    req(url, function(json){
       console.log(json);
 
       for(i=0;i<6;i++){
