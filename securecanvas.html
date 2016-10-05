@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Securecanvas : sc">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>SecureCanvas</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+
+          <h1 id="project_title">SecureCanvas</h1>
+          <h2 id="project_tagline">The first ever whitelist based protection.<br>We're looking for investors!</h2>
+
+          <div style="position:absolute;right:100px;top:70px;width:92px;height:130px;background-size:92px 130px;background-image:url('./logo2.png')"></div>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+<p>Quick intro: I'm <a href="http://homakov.blogspot.com">Egor Homakov</a> and my day job is security consulting at <a href="http://sakurity.com">Sakurity</a>.</p>
+
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>What do vulnerabilities have in common?</h3>
+
+<p>To detect and stop malicious web attacks you need to look for a lot of different activities.  The one thing all attacks have in common though is they all look <strong>different</strong> from what normal users send.</p>
+<p>For example, users are not supposed to:</p>
+<ul>
+<li>Manually type URL. It should be changed by the app.</li>
+<li>Tamper HTTP headers and/or post body. </li>
+<li>Set <tt>User-Agent: () { :;}; /bin/bash -c "whoami"</tt></li>
+<li>Read the source code.</li>
+<li>Change hidden inputs and other kinds of tampering.</li>
+</ul>
+<p>No matter how often fancy promotional material says "machine learning", it will use <strong>a blacklist approach</strong>. Blacklists are known to be futile.  Having to figure out ways to detect and block every action an attacker will perform is not effective.  We need a new model.</p>
+
+ 
+
+<p>We are going to create interface-based whitelist (what you see is all you can do). Users are supposed to <strong>type, scroll and click</strong> and this is the only thing SecureCanvas will allow them to do.  This reduces the attack surface to absolute zero. Even the most vulnerable apps written by the most careless developer will become unhackable if its interface doesn't provide a way to hack it.</p>
+ 
+<img src="./diagram.png">
+
+<p>When the user requests http://example.com SecureCanvas loads the real example.com (which can only be accessed by SecureCanvas) in <strong>a virtual lightweight libwebkit-based browser</strong>. The user gets back a special syncronization page containing:</p>
+<ul>
+<li>A fullscreen &lt;canvas&gt; element. (Implementation #1 only)</li>
+<li>Javascript code creating a fast and encrypted websocket connection to SecureCanvas server. This works as a proxy for user events, gets back a Remote Frame Buffer (or HTML snapshots and diffs for Implementation #2).</li>
+<li> Text and links from the original example.com HTML snapshot. This is not visible to the user, but is useful for search engines and crawlers.</li>
+</ul>
+
+
+<h3>Implementation #1: Canvas and Remote Frame Buffer</h3>
+<p>Advantadges:</p>
+<ul>
+  <li>Easy to get started with just Chrome in kiosk mode.</li>
+  <li>You can even switch off copy/paste.</li>
+</ul>
+
+<p>Disadvantadges:</p>
+<ul>
+  <li>Unpleasant network latency. Typing feels slower.</li>
+  <li>Fonts and images look compressed (<a href="./tw.png">see this screenshot</a>)</li>
+  <li>Problems with external widgets depending on cookies.</li>
+</ul>
+
+<h3>Implementation #2: DOM snapshots instead of RFB</h3>
+
+<p>Instead of sending huge compressed PNGs over the wire it is easier to use HTML. SecureCanvas will get DOM diffs and patch current state in the user browser. <a href="https://github.com/Matt-Esch/virtual-dom">virtual-dom</a> and <a href="http://facebook.github.io/react/">React.js by Facebook</a> use a similar approach but for a very different purpose.</p>
+
+<p>Advantadges:</p>
+<ul>
+  <li>Website will look and feel the same.</li>
+  <li>Responsive scrolling and typing.</li>
+  <li>Widgets will keep working.</li>
+</ul>
+
+<h3>Implementation #3: Hot request whitelisting</h3>
+
+<p>For every page the user requests, SecureCanvas creates a virtual twin browser with this page in the cloud. JavaScript code is injected into the page to transmit and replay all user actions in the twin browser. So when your local page sends a request, your twin browser sends a similar request. Once SecureCanvas has two equal requests from both browsers it proves the request is the legitimate result of interaction with the app interface, and the request is proxied to the real example.com server.</p>
+<p>Website's behavior remains exactly the same. No network latency and no problems with 3rd party requests.</p>
+
+
+<h3>URL Guard</h3>
+<p>To prevent URL tampering SecureCanvas will have flexible URL validation system with following security model choices:</p>
+
+<ol type="1">
+<li> Only root is allowed &mdash; perfect for online banks and standalone apps where the user is not supposed to share, nor open, URLs with specific path.</li>
+<li> HMAC-signed URLs (<strong>by default</strong>). For example http://example.com/users?id=homakov will look like http://example.com/users?id=homakov/d9fx49d0189e1759 in the address bar. Without the signature SecureCanvas will not accept it. This will prevent all kinds of access bypasses &mdash; you cannot load /private_info/OTHER_USER_ID without a valid signature for that path.</li>
+<li> Known URLs only. Opening /some_url will be allowed only if the SecureCanvas server previously navigated to that address</li>
+<li> Any URL is allowed. </li>
+</ol>
+<p>It will be possible to skip SecureCanvas for non-browser endpoints such as APIs.</p>
+
+
+
+
+<h4>OWASP Top 10 and other bugs SecureCanvas prevents:</h4>
+<ul>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A1-Injection">A1 Injections (prevents parameters tampering)</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A2-Broken_Authentication_and_Session_Management">A2 Broken Authentication and Session Management</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A3-Cross-Site_Scripting_(XSS)">A3 XSS (prevents parameters tampering)</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A4-Insecure_Direct_Object_References">A4 Insecure Direct Object References</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A5-Security_Misconfiguration">A5 Security Misconfiguration (partially)</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A6-Sensitive_Data_Exposure">A6 Sensitive Data Exposure (partially)</a></li>
+
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A7-Missing_Function_Level_Access_Control">A7 Missing Function Level Access Control (interface-based access control. You can't do something you can't see and click on.)</a></li>
+
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A8-Cross-Site_Request_Forgery_(CSRF)">A8 Cross-Site Request Forgery</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities">A9 Using Components with Known Vulnerabilities (makes harder to exploit known vulnerabilities)</a></li>
+<li><a href="https://www.owasp.org/index.php/Top_10_2013-A10-Unvalidated_Redirects_and_Forwards">A10 Unvalidated Redirects and Forwards</a></li>
+
+<li>Heartbleed (real https://example.com is unreachable)</li>
+<li>Shellshock (cannot tamper with headers)</li>
+<li>Rails Remote Code Execution (cannot manually set neither Content-Type nor post body)</li>
+<li>Mass assignment (you cannot add extra inputs nor edit hidden ones)</li>
+<li>Regular expression bypass for Ruby (you cannot replace an input with textarea)</li>
+<li>JSONP or RJS leakings (URL Guard will not accept internal URL)</li>
+<li>Clickjacking / UI redressing (synchronization page has X-Frame-Options:DENY)</li>
+<li><a href="http://oauthsecurity.com">OAuth vulnerabilities</a></li>
+<li>Everything else you can think of!</li>
+</ul>
+
+It doesn't protect you from <strong>bugs that can happen during normal browsing</strong>. However, SecureCanvas will make these significantly harder to exploit:
+<ol type="1">
+<li> Race conditions. You will be able to limit requests per seconds per UserID but some kinds of race conditions can be performed from different accounts, such as redeeming a voucher.</li>
+<li>  DDoS. It might have anti-DDoS protection built-in but the nature of DDoS makes it impossible to prevent completely.</li>
+<li>  Bots. Nobody can stop bots. The best you can do is to make the attack a little bit more expensive for them using hashcash or CAPTCHA. Everything else "that stops bots" is snake oil.</li>
+<li> Bruteforce.</li>
+<li> XSS and SQL injections via text inputs. There will be an option to disallow typing  &lt;&gt;&quot;'.</li>
+<img width="200" src="./sqli.png">
+<img width="200" src="./xss.png">
+</ol>
+<h3>Solutions</h3>
+<p>There will be an Enterprise edition to install on premises for banks and companies with strict security policies. For everyone else there will be PaaS.</p>
+<h1>Fundraising</h1>
+<p>There's no prototype yet. <strong>We're looking for investors to speed this up</strong>.
+</p>
+
+
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Contact us: <a href="mailto:info@sakurity">info@sakurity.com</a> </p>
+        <p>or shoot a tweet to our team <a href="https://twitter.com/homakov">@homakov</a>, <a href="https://twitter.com/isciurus">@isciurus</a>, <a href="https://twitter.com/paulmillr">@paulmillr</a></p>
+      </footer>
+    </div>
+
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-58212598-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>
